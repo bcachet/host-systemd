@@ -1,0 +1,30 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "host-systemd",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.23-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+	},
+	"containerEnv": {
+		"DBUS_SYSTEM_BUS_ADDRESS": "unix:path=/run/dbus/system_bus_socket"
+	},
+	"mounts": [
+		{
+			"source": "/run/dbus/system_bus_socket",
+			"target": "/run/dbus/system_bus_socket",
+			"type": "bind"
+		}
+	],
+	"remoteUser": "root",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.Go",
+				"ms-azuretools.vscode-docker",
+				"GitHub.vscode-pull-request-github"
+			]
+		}
+	}
+}
