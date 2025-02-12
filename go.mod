@@ -1,6 +1,6 @@
 module github.com/exoscale/host-systemd
 
-go 1.23.4
+go 1.19
 
 require github.com/coreos/go-systemd/v22 v22.5.0
 

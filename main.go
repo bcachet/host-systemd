@@ -18,16 +18,13 @@ const (
 )
 
 func main() {
-	var command string
-	var unit string
-	flag.StringVar(&command, "command", "reload", "Operation to perform [reload|restart]")
-	flag.StringVar(&unit, "unit", "", "Targeted Systemd unit/service")
 	flag.Parse()
-
-	if unit == "" {
-		flag.Usage()
+	if flag.NArg() < 2 {
+		Usage()
 		os.Exit(Error)
 	}
+	var command string = flag.Arg(0)
+	var unit string = flag.Arg(1)
 
 	ctx := context.Background()
 	systemdConnection, err := dbus.NewSystemConnectionContext(ctx)
@@ -69,7 +66,6 @@ func executeSystemdCommand(c *dbus.Conn, ctx context.Context, command string, un
 }
 
 func Usage() {
-	fmt.Printf("usage: %s [-command] [-unit]\n\n", os.Args[0])
-	fmt.Printf("Flags:\n")
+	fmt.Printf("usage: %s COMMAND UNIT\n\n", os.Args[0])
 	flag.PrintDefaults()
 }

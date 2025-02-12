@@ -1,0 +1,42 @@
+FROM docker.io/library/debian:12.9-slim AS builder
+
+RUN <<EOF
+  apt-get update
+  apt-get install -y --no-install-recommends \
+    unzip=6.0-28 \
+    golang-go=2:1.19~1 \
+    ca-certificates
+  apt-get clean
+  rm -rf /var/lib/apt/lists/*
+EOF
+
+WORKDIR /app
+
+## Custom systemctl wrapper
+RUN --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=go.sum,target=go.sum \
+  go mod download
+
+RUN --mount=type=bind,source=go.mod,target=go.mod \
+    --mount=type=bind,source=go.sum,target=go.sum \
+    --mount=type=bind,source=main.go,target=main.go \
+  go build -o systemctl
+
+## Vault
+ARG VAULT_VERSION=1.17.6
+ENV TARBALL=vault_${VAULT_VERSION}_linux_amd64.zip
+ADD https://releases.hashicorp.com/vault/${VAULT_VERSION}/${TARBALL} /tmp/${TARBALL}
+RUN <<EOF
+unzip /tmp/${TARBALL} vault
+EOF
+
+FROM docker.io/library/debian:12.9-slim
+
+COPY --from=builder /app/vault /bin/vault
+COPY --from=builder /app/systemctl /usr/bin/systemctl
+
+ENV DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+
+ENTRYPOINT [ "/bin/vault" ]
+CMD ["agent", "-config=/etc/vault/agent.hcl"]
+

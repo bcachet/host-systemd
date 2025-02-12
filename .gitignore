@@ -8,6 +8,7 @@
 !go.sum
 
 !Dockerfile
+!Dockerfile.custom
 
 !.devcontainer/
 !.devcontainer/*
