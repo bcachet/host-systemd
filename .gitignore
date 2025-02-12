@@ -1,10 +1,13 @@
 *
 
 !.gitignore
+!README.md
 
 !*.go
 !go.mod
 !go.sum
+
+!Dockerfile
 
 !.devcontainer/
 !.devcontainer/*
