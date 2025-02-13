@@ -27,7 +27,7 @@ SHELL ["/bin/bash", "-e", "-o", "pipefail", "-c"]
 RUN <<EOF
 apt-get update
 apt-get install -y --no-install-recommends \
-  systemd=252.33-1~deb12u1
+  systemd
 apt-get clean
 rm -rf /var/lib/apt/lists/*
 EOF
