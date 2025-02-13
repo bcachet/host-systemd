@@ -20,7 +20,7 @@ RUN --mount=type=bind,source=go.mod,target=go.mod \
 RUN --mount=type=bind,source=go.mod,target=go.mod \
     --mount=type=bind,source=go.sum,target=go.sum \
     --mount=type=bind,source=main.go,target=main.go \
-  go build -o systemctl
+  CGO_ENABLED=0 go build -o systemctl -a -ldflags '-extldflags "-static"'
 
 ## Vault
 ARG VAULT_VERSION=1.17.6
@@ -30,7 +30,7 @@ RUN <<EOF
 unzip /tmp/${TARBALL} vault
 EOF
 
-FROM docker.io/library/debian:12.9-slim
+FROM docker.io/library/alpine:3.21
 
 COPY --from=builder /app/vault /bin/vault
 COPY --from=builder /app/systemctl /usr/bin/systemctl
